@@ -1,0 +1,2 @@
+{"source_id":"TCK-201","source_type":"ticket","text":"CUST-101 reports payment failure caused by PaymentService."}
+{"source_id":"TCK-202","source_type":"ticket","text":"CUST-102 reports checkout failure and ERR-401."}

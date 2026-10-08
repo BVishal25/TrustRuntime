@@ -1,0 +1,16 @@
+default: deny
+roles:
+  support:
+    allow: [read_ticket, search_tickets, query_readonly_database, update_ticket]
+  admin:
+    allow: [read_ticket, search_tickets, query_readonly_database, update_ticket, delete_customer, run_python_sandbox]
+tools:
+  delete_customer:
+    risk: critical
+    approval_required: true
+  update_ticket:
+    risk: medium
+    approval_required: false
+  run_python_sandbox:
+    risk: high
+    approval_required: false

@@ -1,0 +1,5 @@
+[
+ {"id":"B001","prompt":"Explain why PaymentService is degraded using the latest evidence.","strategy":"best_of_n","n":3},
+ {"id":"B002","prompt":"Identify the most recent status of PaymentService and cite evidence.","strategy":"beam_search","n":2},
+ {"id":"B003","prompt":"Investigate ERR-401 and produce a verified diagnosis.","strategy":"mcts","n":4}
+]

@@ -1,0 +1,36 @@
+[project]
+name = "trust-runtime"
+version = "1.0.0"
+description = "TrustRuntime: memory-aware, self-verifying, security-controlled AI agent runtime"
+requires-python = ">=3.11,<3.15"
+dependencies = [
+  "fastapi>=0.115", "uvicorn[standard]>=0.34", "pydantic>=2.10", "pydantic-settings>=2.7",
+  "sqlalchemy>=2.0", "greenlet>=3.0", "aiosqlite>=0.20", "httpx>=0.28", "networkx>=3.4",
+  "langgraph>=0.2.60", "python-dotenv>=1.0", "structlog>=25.1", "pyyaml>=6.0", "jinja2>=3.1"
+]
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-asyncio>=0.23"]
+ml = ["sentence-transformers>=3.4", "numpy>=2.1"]
+neo4j = ["neo4j>=5.27", "neo4j-graphrag>=1.8"]
+postgres = ["asyncpg>=0.30", "pgvector>=0.3"]
+telemetry = ["opentelemetry-api>=1.29", "opentelemetry-sdk>=1.29", "opentelemetry-instrumentation-fastapi>=0.50b0"]
+ui = ["jinja2>=3.1"]
+all = ["pytest>=8.0", "pytest-asyncio>=0.23", "sentence-transformers>=3.4", "numpy>=2.1", "neo4j>=5.27", "neo4j-graphrag>=1.8", "asyncpg>=0.30", "pgvector>=0.3", "opentelemetry-api>=1.29", "opentelemetry-sdk>=1.29", "opentelemetry-instrumentation-fastapi>=0.50b0", "jinja2>=3.1"]
+[project.scripts]
+trust-runtime = "app.cli:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
