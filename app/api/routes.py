@@ -1,5 +1,6 @@
 from __future__ import annotations
 import uuid, json, time
+from pathlib import Path
 from typing import Any
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
@@ -165,7 +166,13 @@ async def redteam():
 async def run_benchmark():
     session, r = await build_runtime()
     try:
-        cases = json.load(open("data/benchmarks/tasks.json"))
+        benchmark_file = Path("data/benchmarks/tasks.json")
+        if not benchmark_file.is_file():
+            benchmark_file = Path(__file__).resolve().parent.parent.parent / "data" / "benchmarks" / "tasks.json"
+        if benchmark_file.is_file():
+            cases = json.loads(benchmark_file.read_text(encoding="utf-8"))
+        else:
+            cases = []
         results = []
         for c in cases:
             st = time.perf_counter()

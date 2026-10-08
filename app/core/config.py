@@ -1,9 +1,15 @@
+import os
 from functools import lru_cache
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+def get_default_database_url() -> str:
+    if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+        return "sqlite+aiosqlite:////tmp/trustruntime.db"
+    return "sqlite+aiosqlite:///./data/trustruntime.db"
+
 class Settings(BaseSettings):
     app_env: str = "development"
-    database_url: str = "sqlite+aiosqlite:///./data/trustruntime.db"
+    database_url: str = get_default_database_url()
     ollama_enabled: bool = False
     ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "qwen3:0.6b"

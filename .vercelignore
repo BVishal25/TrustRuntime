@@ -1,0 +1,12 @@
+.venv
+tests
+.pytest_cache
+.mypy_cache
+.ruff_cache
+docs
+.github
+*.egg-info
+*.db
+*.sqlite
+*.sqlite3
+uv.lock
