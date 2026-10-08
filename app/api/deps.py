@@ -1,4 +1,4 @@
-from app.db.database import SessionLocal
+from app.db.database import SessionLocal, init_db
 from app.db.repository import Repository
 from app.memory.store import MemoryEngine
 from app.memory.embeddings import HashEmbedding
@@ -9,6 +9,7 @@ from app.core.runtime import TrustRuntime
 from app.core.config import get_settings
 
 async def build_runtime():
+    await init_db()
     session=SessionLocal(); repo=Repository(session); settings=get_settings()
     embedding=HashEmbedding()
     if settings.embedding_model:

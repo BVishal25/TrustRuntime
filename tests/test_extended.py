@@ -206,43 +206,42 @@ async def test_runtime_end_to_end_with_tool_and_audit():
     await engine.dispose()
 
 def test_api_endpoints_via_test_client():
-    client = TestClient(app)
+    with TestClient(app) as client:
+        # Health
+        r = client.get("/api/health")
+        assert r.status_code == 200
+        assert r.json()["status"] == "ok"
 
-    # Health
-    r = client.get("/api/health")
-    assert r.status_code == 200
-    assert r.json()["status"] == "ok"
+        # Memory Snapshot
+        r = client.get("/api/memory/snapshot")
+        assert r.status_code == 200
+        assert "documents" in r.json()
 
-    # Memory Snapshot
-    r = client.get("/api/memory/snapshot")
-    assert r.status_code == 200
-    assert "documents" in r.json()
+        # Tools List
+        r = client.get("/api/tools")
+        assert r.status_code == 200
+        assert "read_ticket" in r.json()["tools"]
 
-    # Tools List
-    r = client.get("/api/tools")
-    assert r.status_code == 200
-    assert "read_ticket" in r.json()["tools"]
+        # Red Team
+        r = client.get("/api/security/redteam")
+        assert r.status_code == 200
+        attacks = r.json()
+        assert len(attacks) == 5
+        assert all(a["blocked"] is True for a in attacks)
 
-    # Red Team
-    r = client.get("/api/security/redteam")
-    assert r.status_code == 200
-    attacks = r.json()
-    assert len(attacks) == 5
-    assert all(a["blocked"] is True for a in attacks)
+        # Execute Tool via API (allowed)
+        r = client.post("/api/tools/execute", json={"tool_name": "read_ticket", "arguments": {"ticket_id": "TCK-1"}, "role": "support"})
+        assert r.status_code == 200
+        assert r.json()["status"] == "success"
 
-    # Execute Tool via API (allowed)
-    r = client.post("/api/tools/execute", json={"tool_name": "read_ticket", "arguments": {"ticket_id": "TCK-1"}, "role": "support"})
-    assert r.status_code == 200
-    assert r.json()["status"] == "success"
+        # Execute Tool via API (blocked unauthorized)
+        r = client.post("/api/tools/execute", json={"tool_name": "delete_customer", "arguments": {"customer_id": "C-1"}, "role": "support"})
+        assert r.status_code == 200
+        assert r.json()["status"] == "blocked"
 
-    # Execute Tool via API (blocked unauthorized)
-    r = client.post("/api/tools/execute", json={"tool_name": "delete_customer", "arguments": {"customer_id": "C-1"}, "role": "support"})
-    assert r.status_code == 200
-    assert r.json()["status"] == "blocked"
-
-    # Run Benchmark
-    r = client.post("/api/benchmark/run")
-    assert r.status_code == 200
-    res = r.json()
-    assert res["summary"]["total"] == 3
-    assert res["summary"]["verified"] == 3
+        # Run Benchmark
+        r = client.post("/api/benchmark/run")
+        assert r.status_code == 200
+        res = r.json()
+        assert res["summary"]["total"] == 3
+        assert res["summary"]["verified"] == 3
